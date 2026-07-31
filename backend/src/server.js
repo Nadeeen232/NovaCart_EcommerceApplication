@@ -1,0 +1,22 @@
+import 'dotenv/config';
+import 'express-async-errors';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import mongoose from 'mongoose';
+import authRoutes from './routes/auth.routes.js';
+import productRoutes from './routes/product.routes.js';
+import cartRoutes from './routes/cart.routes.js';
+
+const app=express();
+app.use(helmet()); app.use(cors({origin:process.env.CLIENT_URL||'http://localhost:4200'}));
+app.use(express.json({limit:'1mb'})); app.use(morgan('dev'));
+app.use('/api/auth',rateLimit({windowMs:15*60*1000,limit:100}),authRoutes);
+app.use('/api/products',productRoutes); app.use('/api/cart',cartRoutes);
+app.get('/api/health',(_,res)=>res.json({ok:true,service:'NovaCart API'}));
+app.use((req,res)=>res.status(404).json({message:'Route not found'}));
+app.use((err,req,res,next)=>{console.error(err);res.status(err.status||500).json({message:err.message||'Server error'});});
+const port=process.env.PORT||5000;
+mongoose.connect(process.env.MONGODB_URI).then(()=>app.listen(port,()=>console.log(`API http://localhost:${port}`))).catch(e=>{console.error(e);process.exit(1)});

@@ -1,0 +1,1 @@
+export interface Product{_id:string;name:string;slug:string;description:string;price:number;category:string;image:string;stock:number;rating:number;trending:boolean}export interface User{id:string;name:string;email:string;role:string}export interface CartItem{product:Product;quantity:number}export interface Cart{items:CartItem[]}

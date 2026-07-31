@@ -1,2 +1,85 @@
-import {Component,inject} from '@angular/core';import {FormBuilder,ReactiveFormsModule,Validators} from '@angular/forms';import {ActivatedRoute,Router,RouterLink} from '@angular/router';import {ApiService} from '../core/api.service';
-@Component({standalone:true,imports:[ReactiveFormsModule,RouterLink],template:`<section class="form-page"><div class="form-card"><span class="eyebrow">WELCOME TO NOVACART</span><h1>{{isLogin?'Good to see you.':'Create your account.'}}</h1><p>{{isLogin?'Sign in to continue your journey.':'Join for a faster, more personal experience.'}}</p><form [formGroup]="form" (ngSubmit)="submit()">@if(!isLogin){<label>Full name<input formControlName="name" placeholder="Your name"></label>}<label>Email<input type="email" formControlName="email" placeholder="you@example.com"></label><label>Password<input type="password" formControlName="password" placeholder="At least 8 characters"></label>@if(message){<div class="message">{{message}}</div>}<button class="btn wide" [disabled]="form.invalid">{{isLogin?'Sign in':'Create account'}}</button></form><p>{{isLogin?'New here?':'Already have an account?'}} <a [routerLink]="isLogin?'/register':'/login'">{{isLogin?'Create an account':'Sign in'}}</a></p></div></section>`})export class AuthComponent{api=inject(ApiService);fb=inject(FormBuilder);route=inject(ActivatedRoute);router=inject(Router);isLogin=this.route.snapshot.data['mode']==='login';message='';form=this.fb.group({name:['',this.isLogin?[]:[Validators.required]],email:['',[Validators.required,Validators.email]],password:['',[Validators.required,Validators.minLength(8)]]});submit(){const request=this.isLogin?this.api.login(this.form.value):this.api.register(this.form.value);request.subscribe({next:(r:any)=>{if(this.isLogin)this.router.navigateByUrl('/');else this.message=r.devConfirmationUrl?`Development mode: open ${r.devConfirmationUrl}`:r.message},error:e=>this.message=e.error?.message||'Something went wrong'})}}
+import { Component, inject } from "@angular/core";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { ApiService } from "../core/api.service";
+@Component({
+  standalone: true,
+  imports: [ReactiveFormsModule, RouterLink],
+  template: `<section class="form-page">
+    <div class="form-card">
+      <span class="eyebrow">WELCOME TO NOVACART</span>
+      <h1>{{ isLogin ? "Good to see you." : "Create your account." }}</h1>
+      <p>
+        {{
+          isLogin
+            ? "Sign in to continue your journey."
+            : "Join for a faster, more personal experience."
+        }}
+      </p>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        @if (!isLogin) {
+          <label
+            >Full name<input formControlName="name" placeholder="Your name"
+          /></label>
+        }
+        <label
+          >Email<input
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com" /></label
+        ><label
+          >Password<input
+            type="password"
+            formControlName="password"
+            placeholder="At least 8 characters"
+        /></label>
+        @if (message) {
+          <div class="message">{{ message }}</div>
+        }
+        <button class="btn wide" [disabled]="form.invalid">
+          {{ isLogin ? "Sign in" : "Create account" }}
+        </button>
+      </form>
+      <p>
+        {{ isLogin ? "New here?" : "Already have an account?" }}
+        <a [routerLink]="isLogin ? '/register' : '/login'">{{
+          isLogin ? "Create an account" : "Sign in"
+        }}</a>
+      </p>
+    </div>
+  </section>`,
+})
+export class AuthComponent {
+  api = inject(ApiService);
+  fb = inject(FormBuilder);
+  route = inject(ActivatedRoute);
+  router = inject(Router);
+  isLogin = this.route.snapshot.data["mode"] === "login";
+  message = "";
+  form = this.fb.group({
+    name: ["", this.isLogin ? [] : [Validators.required]],
+    email: ["", [Validators.required, Validators.email]],
+    password: ["", [Validators.required, Validators.minLength(8)]],
+  });
+  submit() {
+    const request = this.isLogin
+      ? this.api.login(this.form.value)
+      : this.api.register(this.form.value);
+    request.subscribe({
+      next: (r: any) => {
+        if (this.isLogin) {
+          this.router.navigateByUrl("/");
+        } else {
+          this.message = "Account created. Check the confirmation link.";
+        }
+      },
+      //   if (this.isLogin) this.router.navigateByUrl("/");
+      //   else
+      //     this.message = r.devConfirmationUrl
+      //       ? `Development mode: open ${r.devConfirmationUrl}`
+      //       : r.message;
+      // },
+      error: (e) => (this.message = e.error?.message || "Something went wrong"),
+    });
+  }
+}

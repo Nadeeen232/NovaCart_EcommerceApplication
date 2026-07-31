@@ -210,9 +210,9 @@ const products = [
     category: "Wearables",
     brand: "Aero",
     image:
-      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=80",
+      "https://tse4.mm.bing.net/th/id/OIP.dqNoVtLLEULycGmIxkdM_wHaGN?r=0&pid=Api&h=220&P=0",
     images: [
-      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=80",
+      "https://tse4.mm.bing.net/th/id/OIP.dqNoVtLLEULycGmIxkdM_wHaGN?r=0&pid=Api&h=220&P=0",
     ],
     stock: 30,
     rating: 4.5,
